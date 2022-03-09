@@ -13,6 +13,46 @@ import java.util.Map;
 
 public class CompaniesDBDAO implements CompaniesDAO {
 
+    private final String IS_COMPANY_EXISTS = "SELECT COUNT(*) AS total " +
+            "FROM coupon_project.companies " +
+            "WHERE email=? AND password=?";
+
+    private final String IS_COMPANY_EXISTS_BY_ID = "SELECT COUNT(*) AS total " +
+            "FROM coupon_project.companies " +
+            "WHERE id=?";
+
+    private final String ADD_COMPANY = "INSERT " +
+            "INTO coupon_project.companies " +
+            "(`name`,`email`,`password`) " +
+            "VALUES (?,?,?)";
+
+    private final String UPDATE_COMPANY = "UPDATE " +
+            "coupon_project.companies " +
+            "SET email=?, password=? " +
+            "WHERE name=?";
+
+    private final String DELETE_COMPANY = "DELETE " +
+            "FROM coupon_project.companies " +
+            "WHERE id=?";
+
+    private final String GET_ALL_COMPANY = "SELECT * " +
+            "FROM coupon_project.companies";
+
+    private final String GET_ONE_COMPANY = "SELECT * " +
+            "FROM coupon_project.companies " +
+            "WHERE id=?";
+
+    private final String GET_COMPANY_ID_BY_EMAIL = "SELECT id " +
+            "FROM coupon_project.companies " +
+            "WHERE email=?";
+
+    private final String IS_COMPANY_EXISTS_BY_NAME = "SELECT COUNT(*) AS total " +
+            "FROM coupon_project.companies " +
+            "WHERE name=?";
+
+    private final String IS_COMPANY_EXISTS_BY_EMAIL = "SELECT COUNT(*) AS total " +
+            "FROM coupon_project.companies " +
+            "WHERE email=?";
 
     @Override
     public boolean isCompanyExists(String email, String password) throws SQLException, InterruptedException {
@@ -21,12 +61,8 @@ public class CompaniesDBDAO implements CompaniesDAO {
         // Adding all the replacement values and their order
         params.put(1, email);
         params.put(2, password);
-        // The statement to run with its "?" where needed
-        String CHECK_COMPANY = "SELECT COUNT(*) AS total " +
-                "FROM coupon_project.companies " +
-                "WHERE email=? AND password=?";
         // Running the statement and getting a ResultSet
-        ResultSet resultSet = DatabaseUtils.runQueryForResult(CHECK_COMPANY, params);
+        ResultSet resultSet = DatabaseUtils.runQueryForResult(IS_COMPANY_EXISTS, params);
         // Moving for the first line of the ResultSet
         resultSet.next();
         // Returning whether it counts more than 0 matching values (=exist)
@@ -39,12 +75,8 @@ public class CompaniesDBDAO implements CompaniesDAO {
         Map<Integer, Object> params = new HashMap<>();
         // Adding all the replacement values and their order
         params.put(1, companyID);
-        // The statement to run with its "?" where needed
-        String IS_COUPON_EXISTS = "SELECT COUNT(*) AS total " +
-                "FROM coupon_project.companies " +
-                "WHERE id=?";
         // Running the statement and getting a ResultSet
-        ResultSet resultSet = DatabaseUtils.runQueryForResult(IS_COUPON_EXISTS, params);
+        ResultSet resultSet = DatabaseUtils.runQueryForResult(IS_COMPANY_EXISTS_BY_ID, params);
         // Moving for the first line of the ResultSet
         resultSet.next();
         // Returning whether it counts more than 0 matching values (=exist)
@@ -59,11 +91,6 @@ public class CompaniesDBDAO implements CompaniesDAO {
         params.put(1, company.getName());
         params.put(2, company.getEmail());
         params.put(3, company.getPassword());
-        // The statement to run with its "?" where needed
-        String ADD_COMPANY = "INSERT " +
-                "INTO coupon_project.companies " +
-                "(`name`,`email`,`password`) " +
-                "VALUES (?,?,?)";
         // Running the statement
         DatabaseUtils.runQuery(ADD_COMPANY, params);
     }
@@ -76,11 +103,6 @@ public class CompaniesDBDAO implements CompaniesDAO {
         params.put(1, company.getEmail());
         params.put(2, company.getPassword());
         params.put(3, company.getName());
-        // The statement to run with its "?" where needed
-        String UPDATE_COMPANY = "UPDATE " +
-                "coupon_project.companies " +
-                "SET email=?, password=? " +
-                "WHERE name=?";
         // Running the statement
         DatabaseUtils.runQuery(UPDATE_COMPANY, params);
     }
@@ -91,22 +113,15 @@ public class CompaniesDBDAO implements CompaniesDAO {
         Map<Integer, Object> params = new HashMap<>();
         // Adding all the replacement values and their order
         params.put(1, companyId);
-        // The statement to run with its "?" where needed
-        String CHECK_COMPANY = "DELETE " +
-                "FROM coupon_project.companies " +
-                "WHERE id=?";
         // Running the statement
-        DatabaseUtils.runQuery(CHECK_COMPANY, params);
+        DatabaseUtils.runQuery(DELETE_COMPANY, params);
     }
 
 
     @Override
     public ArrayList<Company> getAllCompany() throws SQLException, InterruptedException {
-        // The statement to run
-        String GET_COMPANIES = "SELECT * " +
-                "FROM coupon_project.companies";
         // Running the statement and getting a ResultSet
-        ResultSet resultSet = DatabaseUtils.runQueryForResult(GET_COMPANIES);
+        ResultSet resultSet = DatabaseUtils.runQueryForResult(GET_ALL_COMPANY);
         // Creating a blank list to fill
         ArrayList<Company> companyList = new ArrayList<>();
         // For every line on the ResultSet
@@ -137,12 +152,8 @@ public class CompaniesDBDAO implements CompaniesDAO {
         Map<Integer, Object> params = new HashMap<>();
         // Adding all the replacement values and their order
         params.put(1, companyId);
-        // The statement to run with its "?" where needed
-        String GET_COMPANY = "SELECT * " +
-                "FROM coupon_project.companies " +
-                "WHERE id=?";
         // Running the statement and getting a ResultSet
-        ResultSet resultSet = DatabaseUtils.runQueryForResult(GET_COMPANY, params);
+        ResultSet resultSet = DatabaseUtils.runQueryForResult(GET_ONE_COMPANY, params);
         // Moving for the first line of the ResultSet
         resultSet.next();
         // Creating a blank company to fill
@@ -168,12 +179,8 @@ public class CompaniesDBDAO implements CompaniesDAO {
         Map<Integer, Object> params = new HashMap<>();
         // Adding all the replacement values and their order
         params.put(1, email);
-        // The statement to run with its "?" where needed
-        String GET_COMPANY = "SELECT id " +
-                "FROM coupon_project.companies " +
-                "WHERE email=?";
         // Running the statement and getting a ResultSet
-        ResultSet resultSet = DatabaseUtils.runQueryForResult(GET_COMPANY, params);
+        ResultSet resultSet = DatabaseUtils.runQueryForResult(GET_COMPANY_ID_BY_EMAIL, params);
         // Moving for the first line of the ResultSet
         resultSet.next();
         // Return the wanted ID
@@ -186,12 +193,8 @@ public class CompaniesDBDAO implements CompaniesDAO {
         Map<Integer, Object> params = new HashMap<>();
         // Adding all the replacement values and their order
         params.put(1, name);
-        // The statement to run with its "?" where needed
-        String CHECK_COMPANY_BY_NAME = "SELECT COUNT(*) AS total " +
-                "FROM coupon_project.companies " +
-                "WHERE name=?";
         // Running the statement and getting a ResultSet
-        ResultSet resultSet = DatabaseUtils.runQueryForResult(CHECK_COMPANY_BY_NAME, params);
+        ResultSet resultSet = DatabaseUtils.runQueryForResult(IS_COMPANY_EXISTS_BY_NAME, params);
         // Moving for the first line of the ResultSet
         resultSet.next();
         // Returning whether it counts more than 0 matching values (=exist)
@@ -204,12 +207,8 @@ public class CompaniesDBDAO implements CompaniesDAO {
         Map<Integer, Object> params = new HashMap<>();
         // Adding all the replacement values and their order
         params.put(1, email);
-        // The statement to run with its "?" where needed
-        String CHECK_COMPANY_BY_EMAIL = "SELECT COUNT(*) AS total " +
-                "FROM coupon_project.companies " +
-                "WHERE email=?";
         // Running the statement and getting a ResultSet
-        ResultSet resultSet = DatabaseUtils.runQueryForResult(CHECK_COMPANY_BY_EMAIL, params);
+        ResultSet resultSet = DatabaseUtils.runQueryForResult(IS_COMPANY_EXISTS_BY_EMAIL, params);
         // Moving for the first line of the ResultSet
         resultSet.next();
         // Returning whether it counts more than 0 matching values (=exist)

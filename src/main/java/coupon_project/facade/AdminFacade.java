@@ -58,7 +58,7 @@ public class AdminFacade extends ClientFacade {
     }
 
     /**
-     * updates company's data. Can only update company's email or username
+     * updates company's data. Can only update company's email or password
      *
      * @param company Company object.
      * @throws SQLException         when sql raises SQLException.

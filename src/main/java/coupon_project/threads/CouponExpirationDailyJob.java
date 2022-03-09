@@ -3,6 +3,7 @@ package coupon_project.threads;
 import coupon_project.beans.Coupon;
 import coupon_project.dao.CouponsDAO;
 import coupon_project.dao.CustomerVsCouponDAO;
+import coupon_project.db_util.DatabaseUtils;
 import coupon_project.db_util.Factory;
 
 import java.sql.SQLException;
@@ -42,16 +43,12 @@ public class CouponExpirationDailyJob implements Runnable {
         while (isContinue) {
             // Try and Catch to catch the InterruptedException or SQLException
             try {
-                // For every coupon on the table we check is expiration date (=end date)
-                for (Coupon coupon : couponActions.getAllCoupons()) {
-                    // If the coupon is no longer valid we delete it
-                    if (!couponActions.isCouponValid(coupon.getId())) {
-                        // So we delete all of his purchases
-                        purchaseActions.deleteAllPurchasesByCoupon(coupon.getId());
-                        // And finally delete it
-                        this.couponActions.deleteCoupon(coupon.getId());
-                    }
-                }
+                String sql = "DELETE FROM coupon_project.coupons WHERE end_date < CURDATE()";
+                String sql2 = "DELETE FROM coupon_project.coupon_customers WHERE coupon_id IN ( " +
+                        "SELECT id FROM coupon_project.coupons WHERE end_date < CURDATE()" +
+                        ")";
+                DatabaseUtils.runQuery(sql2);
+                DatabaseUtils.runQuery(sql);
                 // After checking all the coupons, the thread sleeps for 24 hours
                 Thread.sleep(1000 * 60 * 60 * 24);
                 //            milliseconds, seconds, minutes, hours

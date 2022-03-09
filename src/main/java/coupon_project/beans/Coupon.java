@@ -136,7 +136,7 @@ public class Coupon {
         return description;
     }
 
-    /**
+    /** 
      * Set function for coupon description
      *
      * @param description Coupon description
